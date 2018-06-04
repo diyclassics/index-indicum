@@ -8,8 +8,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def homepage():
-    pass
-#    return render_template('index.html')
+    return render_template('index.html')
 
 @app.route('/authors')
 def get_authors():
