@@ -19,9 +19,13 @@ def get_authors():
         url = 'http://dlib.nyu.edu/awdl/isaw/isaw-papers/'+str(i)+'/'
         page = requests.get(url)
         html_content = html.fromstring(page.content)
-        author_elements = html_content.xpath('//meta[@name="DC.creator"]')
-        for author in author_elements:
-            authors.append(author.attrib['content'])
+        
+        authors += html_content.xpath('//span[@rel="dcterms:creator"]//text()')
+        authors += html_content.xpath('//span[contains(@property, "dcterms:creator")]/text()')
+        authors += html_content.xpath('//h2[contains(@property, "dcterms:creator")]/text()')
+
+        print(authors)
+
     return render_template('author.html', authors=authors)
 
 
