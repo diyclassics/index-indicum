@@ -8,12 +8,11 @@
 </head>
 <body>
 <h1 style="text-align:center;">Authors of ISAW Papers</h1>
-{% if authors %}
+
 <ul>
-    {% for author in authors %}
-    <li>{{author}}</li>
+    {% for k, v in authors_data.items() %}
+    <li>{{"%s: %s" % (k, ", ".join(v))}}</li>
     {% endfor %}
 </ul>
-{% endif %}
 </body>
 </html>
