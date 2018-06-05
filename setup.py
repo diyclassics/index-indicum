@@ -18,7 +18,7 @@ setup(
     # keywords = "example documentation tutorial",
     # url = "",
     # packages=['an_example_pypi_project', 'tests'],
-    long_description=read('README'),
+    long_description=read('README.md'),
     classifiers=[
     ],
 )
