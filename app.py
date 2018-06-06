@@ -1,7 +1,11 @@
 import os
 from flask import Flask, render_template
+
 import requests
 from lxml import html
+
+from nameparser import HumanName
+
 
 app = Flask(__name__)
 app.debug = True
@@ -10,6 +14,14 @@ app.debug = True
 BASE_URL = 'http://dlib.nyu.edu/awdl/isaw/isaw-papers/'
 PAPERS_URLS = [f'{BASE_URL}{i}' for i in range(1,14)]
 
+# Helper functions
+def _sort_names(names):
+    # Should check for 'last' in keys
+    parsed_names = [HumanName(name) for name in names]
+    return [' '.join(name) for name in sorted(parsed_names, key=lambda x: x['last'])]
+
+
+# Routes
 @app.route('/')
 def homepage():
     return render_template('index.html')
@@ -25,9 +37,10 @@ def get_authors():
         a1 = html_content.xpath('//span[@rel="dcterms:creator"]//text()')
         a2 = html_content.xpath('//span[contains(@property, "dcterms:creator")]/text()')
         a3 = html_content.xpath('//h2[contains(@property, "dcterms:creator")]/text()')
-        a = sorted(list(set(a1+a2+a3)), key=lambda x: x.split()[-1]) # Fix for Bravo III
+        a = _sort_names(list(set(a1+a2+a3))) # Fix for Bravo III
         authors_data[f'ISAW Papers {i}'] = a
     return render_template('author.html', authors_data=authors_data)
+
 
 @app.route('/authors_reversed')
 def get_papers():
