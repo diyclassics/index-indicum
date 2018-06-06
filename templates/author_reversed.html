@@ -10,8 +10,14 @@
 
 <ul>
     {% for k, v in authors_papers.items() %}
-    <li>{{"%s: ISAW Papers %s" % (k, ", ".join(v))}}</a></li>
+    <li>{{"%s: ISAW Papers" % (k)}}
+    {% for value in v %}
+        <a href="{{'%s%s/' % (BASE_URL, value)}}">{{value}}</a>
     {% endfor %}
+            </li>
+
+        {% endfor %}
+
 </ul>
 </body>
 </html>
