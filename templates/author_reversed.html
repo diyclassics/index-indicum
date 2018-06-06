@@ -7,17 +7,14 @@
 </head>
 <body>
 <h1 style="text-align:center;">Authors</h1>
-
 <ul>
     {% for k, v in authors_papers.items() %}
     <li>{{"%s: ISAW Papers" % (k)}}
-    {% for value in v %}
+        {% for value in v %}
         <a href="{{'%s%s/' % (BASE_URL, value)}}">{{value}}</a>
-    {% endfor %}
-            </li>
-
         {% endfor %}
-
+    </li>
+    {% endfor %}
 </ul>
 </body>
 </html>
