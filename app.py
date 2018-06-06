@@ -19,7 +19,6 @@ def homepage():
 def get_authors():
 
     authors_data = dict()
-    authors = []
     for i, url in enumerate(PAPERS_URLS, 1):
         page = requests.get(url)
         html_content = html.fromstring(page.content)
@@ -29,6 +28,26 @@ def get_authors():
         a = sorted(list(set(a1+a2+a3)), key=lambda x: x.split()[-1]) # Fix for Bravo III
         authors_data[f'ISAW Papers {i}'] = a
     return render_template('author.html', authors_data=authors_data)
+
+@app.route('/authors_reversed')
+def get_papers():
+    authors_papers = dict()
+    for i, url in enumerate(PAPERS_URLS, 1):
+        page = requests.get(url)
+        html_content = html.fromstring(page.content)
+        authors = html_content.xpath('//span[@rel="dcterms:creator"]//text()')
+        authors += html_content.xpath('//span[contains(@property, "dcterms:creator")]/text()')
+        authors += html_content.xpath('//h2[contains(@property, "dcterms:creator")]/text()')
+        authors = list(set(authors))
+        for author in authors :
+            try :
+                authors_papers[author].append(str(i))
+            except KeyError:
+                authors_papers[author] = [str(i)]
+
+    print(authors_papers)
+    return render_template('author_reversed.html', authors_papers=authors_papers)
+
 
 
 if __name__ == '__main__':
