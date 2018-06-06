@@ -12,6 +12,7 @@ itsdangerous==0.24
 Jinja2==2.10
 lxml==4.2.1
 MarkupSafe==1.0
+nameparser==0.5.6
 parse==1.8.4
 pyee==5.0.0
 pyppeteer==0.0.17

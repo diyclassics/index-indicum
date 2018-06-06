@@ -37,7 +37,7 @@ def get_authors():
         a1 = html_content.xpath('//span[@rel="dcterms:creator"]//text()')
         a2 = html_content.xpath('//span[contains(@property, "dcterms:creator")]/text()')
         a3 = html_content.xpath('//h2[contains(@property, "dcterms:creator")]/text()')
-        a = _sort_names(list(set(a1+a2+a3))) # Fix for Bravo III
+        a = _sort_names(list(set(a1+a2+a3)))
         authors_data[f'ISAW Papers {i}'] = a
     return render_template('author.html', authors_data=authors_data)
 
