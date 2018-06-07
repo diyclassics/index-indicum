@@ -9,8 +9,8 @@
 <h1 style="text-align:center;">Authors</h1>
 <ul>
     {% for k, v in authors_papers.items() %}
-    <li>{{"%s: ISAW Papers" % (k)}}
-        {% for value in v %}
+    <li><a href='{{v.viaf[0]}}'>{{k}}</a>: ISAW Papers
+        {% for value in v.articles %}
         <a href="{{'%s%s/' % (BASE_URL, value)}}">{{value}}</a>
         {% endfor %}
     </li>
