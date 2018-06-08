@@ -51,15 +51,13 @@ def get_papers():
         authors = html_content.xpath('//span[@rel="dcterms:creator"]//text()')
         authors += html_content.xpath('//span[contains(@property, "dcterms:creator")]/text()')
         authors += html_content.xpath('//h2[contains(@property, "dcterms:creator")]/text()')
-        authors = list(set(authors))
+        authors = set(authors)
         for author in authors :
             try :
                 authors_papers[author].append(str(i))
             except KeyError:
                 authors_papers[author] = [str(i)]
-
-    print(authors_papers)
-    return render_template('author_reversed.html', authors_papers=authors_papers)
+    return render_template('author_reversed.html', authors_papers=authors_papers, BASE_URL=BASE_URL)
 
 
 
