@@ -3,7 +3,7 @@ from flask import Flask, render_template
 
 import requests
 from lxml import html
-
+import re
 from nameparser import HumanName
 
 
@@ -20,6 +20,15 @@ def _sort_names(names):
     parsed_names = [HumanName(name) for name in names]
     return [' '.join(name) for name in sorted(parsed_names, key=lambda x: x['last'])]
 
+#def _update_cash() :
+# NOT WORKING : the files are too big
+#    for i, url in enumerate(PAPERS_URLS, 1):
+#        page = requests.get(url)
+#        html_content = page.text
+#        with open("data/papers/isaw-papers-%s.xhtml"%(i),"w") as paper:
+#            paper.write(str(html_content))
+
+#_update_cash()
 
 # Routes
 @app.route('/')
@@ -64,6 +73,25 @@ def get_papers():
                 authors_papers[author]["articles"].append(str(i))
             authors_papers[author]["viaf"] = html_content.xpath('//span[@rel="dcterms:creator"]/a[.="%s"]/@href'%author)
     return render_template('author_reversed.html', authors_papers=authors_papers, BASE_URL=BASE_URL)
+
+
+@app.route('/places')
+def get_places():
+
+    places_data = dict()
+    for i, url in enumerate(PAPERS_URLS, 1):
+        page = requests.get(url)
+        html_content = html.fromstring(page.content)
+        place_name = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/text()')
+        place_pleiades = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/@href')
+        places = list()
+        for j in range(len(place_name)):
+            places += [place_name[j] + ": " + place_pleiades[j]]
+            places = list(set(places))
+            places.sort()
+        if places:
+            places_data[f'ISAW Papers {i}'] = places
+    return render_template('places.html', places_data=places_data)
+
 if __name__ == '__main__':
     app.run()
-

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Authors</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+
+</head>
+<body>
+<h1 style="text-align:center;">Authors of ISAW Papers</h1>
+
+<ul>
+    {% for k, v in places_data.items() %}
+    <h2>{{k}}</h2>
+    {% for place in v %}
+    <li>{{place}}</li>
+    {% endfor %}
+    {% endfor %}
+</ul>
+</body>
+</html>
