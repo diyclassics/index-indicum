@@ -20,15 +20,15 @@ def _sort_names(names):
     parsed_names = [HumanName(name) for name in names]
     return [' '.join(name) for name in sorted(parsed_names, key=lambda x: x['last'])]
 
-#def _update_cash() :
+def _update_cash() :
 # NOT WORKING : the files are too big
-#    for i, url in enumerate(PAPERS_URLS, 1):
-#        page = requests.get(url)
-#        html_content = page.text
-#        with open("data/papers/isaw-papers-%s.xhtml"%(i),"w") as paper:
-#            paper.write(str(html_content))
+    for i, url in enumerate(PAPERS_URLS, 1):
+        page = requests.get(url)
+        html_content = page.text
+        with open("data/papers/isaw-papers-%s.xhtml"%(i),"w") as paper:
+            paper.write(str(html_content))
 
-#_update_cash()
+_update_cash()
 
 # Routes
 @app.route('/')
