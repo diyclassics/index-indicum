@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title>Authors</title>
+    <title>Places</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
 
 </head>
 <body>
-<h1 style="text-align:center;">Authors of ISAW Papers</h1>
+<h1 style="text-align:center;">Places cited in ISAW Papers</h1>
 
 <ul>
     {% for k, v in places_data.items() %}

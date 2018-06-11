@@ -21,14 +21,13 @@ def _sort_names(names):
     return [' '.join(name) for name in sorted(parsed_names, key=lambda x: x['last'])]
 
 def _update_cash() :
-# NOT WORKING : the files are too big
     for i, url in enumerate(PAPERS_URLS, 1):
         page = requests.get(url)
         html_content = page.text
         with open("data/papers/isaw-papers-%s.xhtml"%(i),"w") as paper:
             paper.write(str(html_content))
 
-_update_cash()
+# _update_cash()
 
 # Routes
 @app.route('/')
@@ -41,8 +40,8 @@ def get_authors():
 
     authors_data = dict()
     for i, url in enumerate(PAPERS_URLS, 1):
-        page = requests.get(url)
-        html_content = html.fromstring(page.content)
+        with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
+            html_content = html.parse(paper)
         a1 = html_content.xpath('//span[@rel="dcterms:creator"]//text()')
         a2 = html_content.xpath('//span[contains(@property, "dcterms:creator")]/text()')
         a3 = html_content.xpath('//h2[contains(@property, "dcterms:creator")]/text()')
@@ -55,8 +54,8 @@ def get_authors():
 def get_papers():
     authors_papers = dict()
     for i, url in enumerate(PAPERS_URLS, 1):
-        page = requests.get(url)
-        html_content = html.fromstring(page.content)
+        with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
+            html_content = html.parse(paper)
         authors = html_content.xpath('//span[@rel="dcterms:creator"]//text()')
         authors += html_content.xpath('//span[contains(@property, "dcterms:creator")]/text()')
         authors += html_content.xpath('//h2[contains(@property, "dcterms:creator")]/text()')
@@ -80,8 +79,8 @@ def get_places():
 
     places_data = dict()
     for i, url in enumerate(PAPERS_URLS, 1):
-        page = requests.get(url)
-        html_content = html.fromstring(page.content)
+        with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
+            html_content = html.parse(paper)
         place_name = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/text()')
         place_pleiades = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/@href')
         places = list()
