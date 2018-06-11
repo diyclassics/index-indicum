@@ -1,6 +1,5 @@
 import os
 from flask import Flask, render_template
-
 import requests
 from lxml import html
 import re
@@ -12,7 +11,7 @@ app.debug = True
 # app.config.from_object(os.environ['APP_SETTINGS'])
 
 BASE_URL = 'http://dlib.nyu.edu/awdl/isaw/isaw-papers/'
-PAPERS_URLS = [f'{BASE_URL}{i}' for i in range(1,14)]
+PAPERS_URLS = [f'{BASE_URL}{i}' for i in range(1,8)]
 
 # Helper functions
 def _sort_names(names):
@@ -76,7 +75,6 @@ def get_papers():
 
 @app.route('/places')
 def get_places():
-
     places_data = dict()
     for i, url in enumerate(PAPERS_URLS, 1):
         with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
@@ -84,8 +82,14 @@ def get_places():
         place_name = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/text()')
         place_pleiades = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/@href')
         places = list()
+
         for j in range(len(place_name)):
-            places += [place_name[j] + ": " + place_pleiades[j]]
+            data = requests.get(place_pleiades[j] + "/json")
+            try :
+                coordinates = data.json()['features'][0]['geometry']['coordinates']
+            except :
+                coordinates = "No geolocations ? "
+            places += [place_name[j] + ": " + place_pleiades[j] + " (" + str(coordinates) + ")"]
             places = list(set(places))
             places.sort()
         if places:
