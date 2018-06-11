@@ -11,7 +11,7 @@ app.debug = True
 # app.config.from_object(os.environ['APP_SETTINGS'])
 
 BASE_URL = 'http://dlib.nyu.edu/awdl/isaw/isaw-papers/'
-PAPERS_URLS = [f'{BASE_URL}{i}' for i in range(1,8)]
+PAPERS_URLS = [f'{BASE_URL}{i}' for i in range(1,3)]
 
 # Helper functions
 def _sort_names(names):
@@ -25,6 +25,27 @@ def _update_cash() :
         html_content = page.text
         with open("data/papers/isaw-papers-%s.xhtml"%(i),"w") as paper:
             paper.write(str(html_content))
+
+def _get_places():
+    places = dict()
+    for i, url in enumerate(PAPERS_URLS, 1):
+
+        with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
+            html_content = html.parse(paper)
+        place_name = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/text()')
+        place_pleiades = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/@href')
+
+        for j in range(len(place_name)):
+            data = requests.get(place_pleiades[j] + "/json")
+            try :
+                coordinates = data.json()['features'][0]['geometry']['coordinates']
+                coordinates.reverse()
+            except :
+                coordinates = []
+            if coordinates and type(coordinates[0]) is not list :
+                places[place_name[j]] = [place_pleiades[j], str(coordinates)]
+    print(len(places))
+    return places
 
 # _update_cash()
 
@@ -88,13 +109,20 @@ def get_places():
             try :
                 coordinates = data.json()['features'][0]['geometry']['coordinates']
             except :
-                coordinates = "No geolocations ? "
+                coordinates = []
             places += [place_name[j] + ": " + place_pleiades[j] + " (" + str(coordinates) + ")"]
             places = list(set(places))
             places.sort()
         if places:
             places_data[f'ISAW Papers {i}'] = places
+    print(len(places))
     return render_template('places.html', places_data=places_data)
+
+@app.route('/map')
+def map_places():
+    places = _get_places()
+    print(places)
+    return render_template('map.html', places=places)
 
 if __name__ == '__main__':
     app.run()
