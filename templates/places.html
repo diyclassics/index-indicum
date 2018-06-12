@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Places</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
+            {% with title='Places'%}
+
+{% include "partials/head.html"  %}
+
+{% endwith %}
 
 </head>
 <body>

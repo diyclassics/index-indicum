@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Authors</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+            {% with title='Authors'%}
+
+{% include "partials/head.html"  %}
+
+{% endwith %}
 
 </head>
 <body>
