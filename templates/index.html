@@ -1,12 +1,7 @@
-<html>
-<head>
-            {% with title='Index'%}
-
-{% include "partials/head.html"  %}
-
-{% endwith %}
-</head>
-<body>
+{% extends "partials/container.html" %}
+{%block head %}
+<title>Index</title>
+{%endblock%}
+{% block body %}
 <h1 style="text-align:center;">Index</h1>
-</body>
-</html>
+{% endblock  %}

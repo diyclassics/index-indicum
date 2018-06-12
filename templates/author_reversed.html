@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-
-    {% with title='Authors'%}
-
-{% include "partials/head.html"  %}
-
-{% endwith %}
-</head>
-<body>
+{% extends "partials/container.html" %}
+{%block head %}
+<title>Authors</title>
+{%endblock%}
+{% block body %}
 <h1 style="text-align:center;">Authors</h1>
 <ul>
     {% for k, v in authors_papers|dictsort %}
@@ -19,5 +13,4 @@
     </li>
     {% endfor %}
 </ul>
-</body>
-</html>
+{%endblock%}

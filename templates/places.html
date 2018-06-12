@@ -1,14 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-            {% with title='Places'%}
+{% extends "partials/container.html" %}
 
-{% include "partials/head.html"  %}
-
-{% endwith %}
-
-</head>
-<body>
+{%block head %}
+<title>Places</title>
+{%endblock%}
+{% block body %}
 <h1 style="text-align:center;">Places cited in ISAW Papers</h1>
 
 <ul>
@@ -19,5 +14,4 @@
     {% endfor %}
     {% endfor %}
 </ul>
-</body>
-</html>
+{%endblock%}
