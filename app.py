@@ -34,17 +34,23 @@ def _get_places():
             html_content = html.parse(paper)
         place_name = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/text()')
         place_pleiades = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/@href')
-
+        #place_pid = html_content.xpath('//a[starts-with(@href,"%s")]/ancestor::p/@id'%place_pleiades)
+        #print(place_pleiades)
         for j in range(len(place_name)):
             data = requests.get(place_pleiades[j] + "/json")
+            place_pid = html_content.xpath('//a[starts-with(@href,"%s")]/ancestor::p/@id' % place_pleiades[j])
+            url_pid = list()
+            for id in place_pid :
+                id = BASE_URL + str(i) + "/#" + id
+                url_pid.append(id)
             try :
                 coordinates = data.json()['features'][0]['geometry']['coordinates']
                 coordinates.reverse()
             except :
                 coordinates = []
             if coordinates and type(coordinates[0]) is not list :
-                places[place_name[j]] = [place_pleiades[j], str(coordinates)]
-    print(len(places))
+                places[place_name[j]] = [place_pleiades[j], str(coordinates), url_pid]
+                #, url+"#"+place_pid[j]]
     return places
 
 # _update_cash()
@@ -102,6 +108,8 @@ def get_places():
             html_content = html.parse(paper)
         place_name = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/text()')
         place_pleiades = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/@href')
+        place_pid = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/ancestor::p/@id')
+        print(place_pid)
         places = list()
 
         for j in range(len(place_name)):
@@ -121,7 +129,7 @@ def get_places():
 @app.route('/map')
 def map_places():
     places = _get_places()
-    print(places)
+    #print(places)
     return render_template('map.html', places=places)
 
 if __name__ == '__main__':

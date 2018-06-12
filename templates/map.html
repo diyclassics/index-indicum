@@ -34,11 +34,10 @@
 	}).addTo(mymap);
 
     {% for  k, v in places.items()  %}
+
     var {{k[:4]}} = L.marker({{v[1]}}).addTo(mymap);
-    {{k[:4]}}.bindPopup("<b>{{k}}</b><br>is right here").openPopup();
-    {% endfor %}
-    var blip = L.marker([42.45, 17.15]).addTo(mymap);
-    blip.bindPopup("<b>Adriatic Sea</b><br>is right there").openPopup();
+    {{k[:4]}}.bindPopup('<p>More info on <b>{{k}}</b> :<br/><a href="{{v[0]}}">Pleiades</a></br>This place is cited in <br/>{% for url in v[2] %}<a href="{{url}}">this paper</a>{% endfor %}</p>').openPopup();{% endfor %}
+
 
 </script>
 
