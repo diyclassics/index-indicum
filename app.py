@@ -1,6 +1,5 @@
 import os
 from flask import Flask, render_template
-
 import requests
 from lxml import html
 import re
@@ -12,7 +11,7 @@ app.debug = True
 # app.config.from_object(os.environ['APP_SETTINGS'])
 
 BASE_URL = 'http://dlib.nyu.edu/awdl/isaw/isaw-papers/'
-PAPERS_URLS = [f'{BASE_URL}{i}' for i in range(1,14)]
+PAPERS_URLS = [f'{BASE_URL}{i}' for i in range(1,3)]
 
 # Helper functions
 def _sort_names(names):
@@ -26,6 +25,30 @@ def _update_cash() :
         html_content = page.text
         with open("data/papers/isaw-papers-%s.xhtml"%(i),"w") as paper:
             paper.write(str(html_content))
+
+def _get_places():
+    places = dict()
+    for i, url in enumerate(PAPERS_URLS, 1):
+
+        with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
+            html_content = html.parse(paper)
+        place_name = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/text()')
+        place_pleiades = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/@href')
+        for j in range(len(place_name)):
+            data = requests.get(place_pleiades[j] + "/json")
+            place_pid = html_content.xpath('//a[starts-with(@href,"%s")]/ancestor::p/@id' % place_pleiades[j])
+            url_pid = list()
+            for id in place_pid :
+                id = BASE_URL + str(i) + "/#" + id
+                url_pid.append(id)
+            try :
+                coordinates = data.json()['features'][0]['geometry']['coordinates']
+                coordinates.reverse()
+            except :
+                coordinates = []
+            if coordinates and type(coordinates[0]) is not list :
+                places[place_name[j]] = [place_pleiades[j], str(coordinates), url_pid, str(i)]
+    return places
 
 # _update_cash()
 
@@ -76,21 +99,33 @@ def get_papers():
 
 @app.route('/places')
 def get_places():
-
     places_data = dict()
     for i, url in enumerate(PAPERS_URLS, 1):
         with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
             html_content = html.parse(paper)
         place_name = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/text()')
         place_pleiades = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/@href')
+        place_pid = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/ancestor::p/@id')
+        print(place_pid)
         places = list()
+
         for j in range(len(place_name)):
-            places += [place_name[j] + ": " + place_pleiades[j]]
+            data = requests.get(place_pleiades[j] + "/json")
+            try :
+                coordinates = data.json()['features'][0]['geometry']['coordinates']
+            except :
+                coordinates = []
+            places += [place_name[j] + ": " + place_pleiades[j] + " (" + str(coordinates) + ")"]
             places = list(set(places))
             places.sort()
         if places:
             places_data[f'ISAW Papers {i}'] = places
     return render_template('places.html', places_data=places_data)
+
+@app.route('/map')
+def map_places():
+    places = _get_places()
+    return render_template('map.html', places=places)
 
 if __name__ == '__main__':
     app.run()
