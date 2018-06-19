@@ -224,18 +224,22 @@ def geonames_query(location):
     response = requests.get(baseurl, params=params)
     response_string = response.text
     parsed_response = json_decode.decode(response_string)
-
-
-
+    coordinates = ()
     if 'geonames' in parsed_response.keys():
+        countries = list()
         if len(parsed_response['geonames']) > 0:
-            first_response = parsed_response['geonames'][0]
-            coordinates = (first_response['lat'], first_response['lng'])
-        else:
-            coordinates = ('', '')
+            for i in range(len(parsed_response['geonames'])):
+                if 'countryName' in parsed_response['geonames'][i] :
+                    countries.append(parsed_response['geonames'][i]['countryName'])
+            top_country = sorted(Counter(countries))
+            for country in parsed_response['geonames'] :
+                for i in range(len(top_country)) :
+                    if 'countryName' in country :
+                        if country['countryName'] == top_country[i]:
+                            coordinates = (country['lat'], country['lng'])
     else:
         coordinates = ('', '')
-    return coordinates, parsed_response
+    return coordinates
 
 
 @app.route('/ner')
@@ -276,32 +280,17 @@ def ner():
     map = dict()
 
     for places in places_set:
-        for place in places[0:3]:
-            print(place)
-            geonames = geonames_query(place)
-            ll =geonames[0]
-            if ll != ('', ''):
+        for place in places:
+            ll = geonames_query(place)
+            print(ll)
+            if ll != ():
                 places_list.append(place)
                 ll = list(ll)
                 map[place] = list()
                 for l in ll :
                     map[place].append((float(l)))
-            parsed_results = geonames[1]
 
-            countries = list()
-            if parsed_results['geonames'] :
-                if 'countryName'in parsed_results['geonames'][0] :
-                    for i in range(len(parsed_results['geonames'])) :
-                        countries.append(parsed_results['geonames'][i]['countryName'])
-            top_country = sorted(Counter(countries))
-            if top_country :
-                print(top_country[0])
-
-            #countries = list()
-            #for result in parsed_results :
-                #for item in result:
-                    #print(item)
-
+    print(map)
     return render_template('map_ner.html', places=map)
 
 if __name__ == '__main__':
