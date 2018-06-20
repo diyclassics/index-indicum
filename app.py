@@ -231,12 +231,12 @@ def geonames_query(location):
             for i in range(len(parsed_response['geonames'])):
                 if 'countryName' in parsed_response['geonames'][i] :
                     countries.append(parsed_response['geonames'][i]['countryName'])
-            top_country = sorted(Counter(countries))
+            top_country = sorted(Counter(countries))[0]
+            print(top_country)
             for country in parsed_response['geonames'] :
-                for i in range(len(top_country)) :
-                    if 'countryName' in country :
-                        if country['countryName'] == top_country[i]:
-                            coordinates = (country['lat'], country['lng'])
+                if 'countryName' in country :
+                    if country['countryName'] == top_country :
+                        coordinates = (country['lat'], country['lng'])
     else:
         coordinates = ('', '')
     return coordinates
@@ -282,7 +282,6 @@ def ner():
     for places in places_set:
         for place in places:
             ll = geonames_query(place)
-            print(ll)
             if ll != ():
                 places_list.append(place)
                 ll = list(ll)
@@ -290,7 +289,6 @@ def ner():
                 for l in ll :
                     map[place].append((float(l)))
 
-    print(map)
     return render_template('map_ner.html', places=map)
 
 if __name__ == '__main__':
