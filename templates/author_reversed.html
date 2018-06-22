@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Authors</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
-</head>
-<body>
+{% extends "partials/container.html" %}
+{%block head %}
+<title>Authors</title>
+{%endblock%}
+{% block body %}
 <h1 style="text-align:center;">Authors</h1>
 <ul>
     {% for k, v in authors_papers|dictsort %}
@@ -16,5 +13,4 @@
     </li>
     {% endfor %}
 </ul>
-</body>
-</html>
+{%endblock%}

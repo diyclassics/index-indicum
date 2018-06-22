@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8"/>
-    <title>Places</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
+{% extends "partials/container.html" %}
 
-</head>
-<body>
+{%block head %}
+<title>Places</title>
+{%endblock%}
+{% block body %}
 <h1 style="text-align:center;">Places cited in ISAW Papers</h1>
 
 <ul>
@@ -18,5 +14,4 @@
     {% endfor %}
     {% endfor %}
 </ul>
-</body>
-</html>
+{%endblock%}

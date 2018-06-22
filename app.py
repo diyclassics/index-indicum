@@ -11,7 +11,7 @@ app.debug = True
 # app.config.from_object(os.environ['APP_SETTINGS'])
 
 BASE_URL = 'http://dlib.nyu.edu/awdl/isaw/isaw-papers/'
-PAPERS_URLS = [f'{BASE_URL}{i}' for i in range(1,3)]
+PAPERS_URLS = [f'{BASE_URL}{i}' for i in range(1,14)]
 
 # Helper functions
 def _sort_names(names):
@@ -105,10 +105,7 @@ def get_places():
             html_content = html.parse(paper)
         place_name = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/text()')
         place_pleiades = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/@href')
-        place_pid = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/ancestor::p/@id')
-        print(place_pid)
         places = list()
-
         for j in range(len(place_name)):
             data = requests.get(place_pleiades[j] + "/json")
             try :
