@@ -26,30 +26,7 @@ def _update_cash() :
         with open("data/papers/isaw-papers-%s.xhtml"%(i),"w") as paper:
             paper.write(str(html_content))
 
-def _get_places():
-    places = dict()
-    for i, url in enumerate(PAPERS_URLS, 1):
-
-        with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
-            html_content = html.parse(paper)
-        place_name = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/text()')
-        place_pleiades = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/@href')
-        for j in range(len(place_name)):
-            data = requests.get(place_pleiades[j] + "/json")
-            place_pid = html_content.xpath('//a[starts-with(@href,"%s")]/ancestor::p/@id' % place_pleiades[j])
-            url_pid = list()
-            for id in place_pid :
-                id = BASE_URL + str(i) + "/#" + id
-                url_pid.append(id)
-            try :
-                coordinates = data.json()['features'][0]['geometry']['coordinates']
-                coordinates.reverse()
-            except :
-                coordinates = []
-            if coordinates and type(coordinates[0]) is not list :
-                places[place_name[j]] = [place_pleiades[j], str(coordinates), url_pid, str(i)]
-    return places
-
+# Uncomment inorder to get the newest verion of the articles
 # _update_cash()
 
 # Routes
@@ -119,10 +96,42 @@ def get_places():
             places_data[f'ISAW Papers {i}'] = places
     return render_template('places.html', places_data=places_data)
 
+
+@app.route('/map/<article_id>')
+@app.route('/<article_id>/map')
 @app.route('/map')
-def map_places():
-    places = _get_places()
+def map_places(**kwargs):
+    places = dict()
+    if kwargs :
+        with open("data/papers/isaw-papers-%s.xhtml" % (kwargs["article_id"]), "r") as paper:
+            html_contents = [html.parse(paper)]
+        i = kwargs["article_id"]
+    else :
+        html_contents = list()
+        for i, url in enumerate(PAPERS_URLS, 1):
+            with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
+                html_contents.append(html.parse(paper))
+        print(html_contents)
+
+    for html_content in html_contents :
+        place_name = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/text()')
+        place_pleiades = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/@href')
+        for j in range(len(place_name)):
+            data = requests.get(place_pleiades[j] + "/json")
+            place_pid = html_content.xpath('//a[starts-with(@href,"%s")]/ancestor::p/@id' % place_pleiades[j])
+            url_pid = list()
+            for id in place_pid :
+                id = BASE_URL + str(i) + "/#" + id
+                url_pid.append(id)
+            try :
+                coordinates = data.json()['features'][0]['geometry']['coordinates']
+                coordinates.reverse()
+            except :
+                coordinates = []
+            if coordinates and type(coordinates[0]) is not list :
+                places[place_name[j]] = [place_pleiades[j], str(coordinates), url_pid, str(i)]
     return render_template('map.html', places=places)
+
 
 if __name__ == '__main__':
     app.run()
