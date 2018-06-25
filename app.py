@@ -111,7 +111,6 @@ def map_places(**kwargs):
         for i, url in enumerate(PAPERS_URLS, 1):
             with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
                 html_contents.append(html.parse(paper))
-        print(html_contents)
 
     for html_content in html_contents :
         place_name = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/text()')
@@ -121,7 +120,8 @@ def map_places(**kwargs):
             place_pid = html_content.xpath('//a[starts-with(@href,"%s")]/ancestor::p/@id' % place_pleiades[j])
             url_pid = list()
             for id in place_pid :
-                id = BASE_URL + str(i) + "/#" + id
+                id =  BASE_URL + str(i) + "/#" + id
+                print(url_pid)
                 url_pid.append(id)
             try :
                 coordinates = data.json()['features'][0]['geometry']['coordinates']

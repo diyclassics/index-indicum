@@ -20,6 +20,11 @@
 {% block body %}
 <h1>Map</h1>
 <div id="mapid"></div>
+<span id="texteJQ"></span>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.js"
+  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+  crossorigin="anonymous"></script>
 
 <script>
 	var mymap = L.map('mapid').setView([37.45, 14.15], 4);
@@ -35,7 +40,23 @@
     {% for  k, v in places.items()  %}
 
     var {{k[:4]}} = L.marker({{v[1]}}).addTo(mymap);
-    {{k[:4]}}.bindPopup('<p>More info on <b>{{k}}</b> :<br/><a href="{{v[0]}}">Pleiades</a></br>This place is cited in ISAW Paper {{v[3]}} <br/>{% for url in v[2] %}<a href="{{url}}">here </a>{% endfor %}</p>').openPopup();{% endfor %}
-</script>
+    {{k[:4]}}.bindPopup('<p id=jquery>More info on <button type="button" class="btn btn-primary">{{k}}</button> :<br/><a href="{{v[0]}}">Pleiades</a></br>This place is cited in ISAW Paper {{v[3]}} <br/>{% for url in v[2] %}<a href="{{url}}">here </a>{% endfor %}</p>').openPopup();
 
+    $(function() {
+$('button').click(function() {
+$('span').html('patate')
+{% for url in v[2] %}
+$.ajax({url: 'https://isawnyu.github.io/isaw-papers-awdl/7/isaw-papers-7-offprint.xhtml',success: function(result){
+
+
+    $("span").html(result);
+    }
+    });
+    {% endfor %}
+});
+});
+{% endfor %}
+
+
+</script>
 {% endblock %}
