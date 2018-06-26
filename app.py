@@ -121,7 +121,6 @@ def map_places(**kwargs):
             url_pid = list()
             for id in place_pid :
                 id =  BASE_URL + str(i) + "/#" + id
-                print(url_pid)
                 url_pid.append(id)
             try :
                 coordinates = data.json()['features'][0]['geometry']['coordinates']
