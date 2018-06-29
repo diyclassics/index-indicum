@@ -37,12 +37,6 @@
     var {{k[:4]}} = L.marker({{v[1]}}).addTo(mymap);
     {{k[:4]}}.bindPopup('<p>More info on <b>{{k}}</b> :<br/><a href="{{v[0]}}">Pleiades</a></br>This place is cited in ISAW Paper {{v[3]}} <br/>{% for url in v[2] %}<a href="{{url}}">here </a>{% endfor %}</p>').openPopup();{% endfor %}
 </script>
-<<<<<<< HEAD
-</body>
-</html>
 
-
-=======
 
 {% endblock %}
->>>>>>> d6fdb3150a94afc8f99678819d96e527061791fb

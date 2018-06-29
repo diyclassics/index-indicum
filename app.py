@@ -9,6 +9,7 @@ from nltk.tokenize import word_tokenize
 from nltk.tag import StanfordNERTagger
 
 
+from lxml.etree import tostring
 
 # Imports
 
@@ -238,7 +239,6 @@ def geonames_query(location):
                 if 'countryName' in parsed_response['geonames'][i] :
                     countries.append(parsed_response['geonames'][i]['countryName'])
             top_country = sorted(Counter(countries))[0]
-            print(top_country)
             for country in parsed_response['geonames'] :
                 if 'countryName' in country :
                     if country['countryName'] == top_country :
@@ -257,11 +257,19 @@ def ner():
 
 
     with open("data/papers/isaw-papers-%s.xhtml" % (1), "r") as paper:
-        html_content = [paper.read()]
-    places_set = []
+        html_parsed = html.parse(paper)
+        work_cited = html_parsed.xpath('//p[@class="work_cited"]')
+        html_parsed = [html_parsed]
 
-    for html in tqdm(html_content):
-        tokenized_marc = word_tokenize(html)
+
+    places_set = []
+    for html_c in tqdm(html_parsed):
+        html_c = tostring(html_c, encoding="unicode")
+        for work in work_cited :
+            work = tostring(work, encoding="unicode")
+            html_c = html_c.replace(work, "")
+
+        tokenized_marc = word_tokenize(html_c)
         classified_marc = st.tag(tokenized_marc)
         classified_marc = [item for item in classified_marc if item[0] != '']  # clean up parsing
         ne_tree = stanfordNE2tree(classified_marc)
@@ -294,6 +302,7 @@ def ner():
                 map[place] = list()
                 for l in ll :
                     map[place].append((float(l)))
+    print(len(map))
 
     return render_template('map_ner.html', places=map)
 
