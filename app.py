@@ -41,7 +41,6 @@ def homepage():
 
 @app.route('/authors')
 def get_authors():
-
     authors_data = dict()
     for i, url in enumerate(PAPERS_URLS, 1):
         with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:

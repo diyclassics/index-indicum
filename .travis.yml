@@ -2,9 +2,20 @@ language: python
 python:
   - "3.6"
 # command to install dependencies
-install:
-  - pip install -r requirements.txt
-  - pip install -e .
+# install:
+#   - pip install pipenv
+#   - pipenv install --dev
+#   # - pip install -r requirements.txt
+#   - pip install -e .
+# # command to run tests
+# # script:
+#   # - pytest # or py.test for Python versions 3.5 and below
+# test:
+#   pipenv run py.tests tests
+
+# command to install dependencies
+install: "make"
+
 # command to run tests
 script:
-  - pytest # or py.test for Python versions 3.5 and below
+    - make test
