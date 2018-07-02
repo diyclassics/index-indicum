@@ -137,9 +137,9 @@ def places_dict(html_contents, i):
             for place in place_captionid :
                 place_pid.append(place)
             text_pid_list = html_content.xpath('//a[starts-with(@href,"%s")]/ancestor::p' % place_pleiades[j])
-            #text_captionid_list = html_content.xpath('//a[starts-with(@href,"%s")]/ancestor::figure' % place_pleiades[j])
-            #for text in text_captionid_list :
-                #text_pid_list.append(text)
+            text_captionid_list = html_content.xpath('//a[starts-with(@href,"%s")]/ancestor::figure' % place_pleiades[j])
+            for text in text_captionid_list :
+                text_pid_list.append(text)
             for k, texte in enumerate(text_pid_list) :
                 text_pid = ""
                 for t in texte :
