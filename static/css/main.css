@@ -1,39 +1,47 @@
 h1 {
-  padding-top: 25px;
-  text-align : center;
+    padding-top: 25px;
+    text-align : center;
 }
-
 
 h2 {
-  padding-top: 25px;
+	padding-top: 25px;
 }
 
-
-
 #article {
-  text-indent:1em;
-  padding:5%;
-  line-height:1.4em;
-  text-align: justify;
-  tab-size: 8;
-  margin:auto;
-  width:70%;
-  color: black;
-  border: 2px solid black;
+	text-indent: 1em;
+	padding: 5%;
+	line-height: 1.4em;
+	text-align: justify;
+	tab-size: 8;
+	margin: auto;
+	width: 70%;
+	color: black;
+	border: 2px solid black;
+	margin-bottom: 15px;
 }
 
 #article > h2 {
-
-    padding-top:0;
-    text-align : center;
-
+	padding-top:0;
+	text-align: center;
 }
-
 
 #article a {
-
-    color : black;
+    color: black;
 }
+
 #mapid {
-    margin-bottom : 20px;
+	margin-bottom: 20px;
+}
+
+#paper_link {
+
+    text-align: center;
+    text-decoration: underline;
+}
+
+.place_name {
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+
 }
