@@ -37,7 +37,6 @@ def homepage():
 
 @app.route('/authors')
 def get_authors():
-
     authors_data = dict()
     for i, url in enumerate(PAPERS_URLS, 1):
         with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
@@ -111,7 +110,6 @@ def map_places(**kwargs):
         for i, url in enumerate(PAPERS_URLS, 1):
             with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
                 html_contents.append(html.parse(paper))
-        print(html_contents)
 
     for html_content in html_contents :
         place_name = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/text()')
