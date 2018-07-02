@@ -33,5 +33,7 @@ Werkzeug = "==0.14.1"
 nltk = "*"
 folium = "*"
 tqdm = "*"
+flask-cors = "*"
+
 
 [dev-packages]
