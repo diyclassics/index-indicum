@@ -4,9 +4,13 @@ import requests
 from lxml import html
 import re
 from nameparser import HumanName
+from flask_cors import CORS
+from lxml.etree import tostring
 
 
 app = Flask(__name__)
+CORS(app)
+
 app.debug = True
 # app.config.from_object(os.environ['APP_SETTINGS'])
 
@@ -95,28 +99,28 @@ def get_places():
             places_data[f'ISAW Papers {i}'] = places
     return render_template('places.html', places_data=places_data)
 
-
-@app.route('/map/<article_id>')
-@app.route('/<article_id>/map')
-@app.route('/map')
-def map_places(**kwargs):
-    places = dict()
-    if kwargs :
-        with open("data/papers/isaw-papers-%s.xhtml" % (kwargs["article_id"]), "r") as paper:
-            html_contents = [html.parse(paper)]
-        i = kwargs["article_id"]
-    else :
-        html_contents = list()
-        for i, url in enumerate(PAPERS_URLS, 1):
-            with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
-                html_contents.append(html.parse(paper))
-
+def places_dict(html_contents, i):
     for html_content in html_contents :
+        places = dict()
         place_name = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/text()')
         place_pleiades = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/@href')
         for j in range(len(place_name)):
             data = requests.get(place_pleiades[j] + "/json")
             place_pid = html_content.xpath('//a[starts-with(@href,"%s")]/ancestor::p/@id' % place_pleiades[j])
+            place_captionid = (html_content.xpath('//a[starts-with(@href,"%s")]/ancestor::figure/@id' % place_pleiades[j]))
+            for place in place_captionid :
+                place_pid.append(place)
+            text_pid_list = html_content.xpath('//a[starts-with(@href,"%s")]/ancestor::p' % place_pleiades[j])
+            #text_captionid_list = html_content.xpath('//a[starts-with(@href,"%s")]/ancestor::figure' % place_pleiades[j])
+            #for text in text_captionid_list :
+                #text_pid_list.append(text)
+            for k, texte in enumerate(text_pid_list) :
+                text_pid = ""
+                for t in texte :
+                    t = tostring(t, encoding="unicode")
+                    text_pid += t
+                text_pid_list[k] = text_pid.replace('\n', '').replace("'", '"')
+                print(text_pid_list[k])
             url_pid = list()
             for id in place_pid :
                 id = BASE_URL + str(i) + "/#" + id
@@ -127,7 +131,40 @@ def map_places(**kwargs):
             except :
                 coordinates = []
             if coordinates and type(coordinates[0]) is not list :
-                places[place_name[j]] = [place_pleiades[j], str(coordinates), url_pid, str(i)]
+                places[place_name[j]] = [place_pleiades[j], str(coordinates), url_pid, [str(i)], text_pid_list]
+
+    return places
+
+@app.route('/map/<article_id>')
+@app.route('/<article_id>/map')
+@app.route('/map')
+def map_places(**kwargs):
+    if kwargs :
+        with open("data/papers/isaw-papers-%s.xhtml" % (kwargs["article_id"]), "r") as paper:
+            html_contents = [html.parse(paper)]
+        i = kwargs["article_id"]
+
+        places = places_dict(html_contents, i)
+    else :
+        places = dict()
+        for i, url in enumerate(PAPERS_URLS, 1):
+            with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
+                html_contents = [html.parse(paper)]
+            places_article = places_dict(html_contents, i)
+            for k,v in places_article.items() :
+                if k in places :
+                    for p in places_article[k][2] :
+                        places[k][2].append(p)
+                        if str(i) not in places[k][3] :
+                            places[k][3].append(str(i))
+                    places[k][3] = ' and '.join(places[k][3])
+                else :
+                    places[k] = v
+    for k, v in places.items():
+        if type(places[k][3]) is list:
+            places[k][3] = ''.join(places[k][3])
+
+
     return render_template('map.html', places=places)
 
 
