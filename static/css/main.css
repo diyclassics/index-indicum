@@ -7,33 +7,48 @@ h2 {
 	padding-top: 25px;
 }
 
-#article {
+#articles {
 	text-indent: 1em;
-	padding: 5%;
 	line-height: 1.4em;
 	text-align: justify;
 	tab-size: 8;
 	margin: auto;
 	width: 70%;
 	color: black;
-	border: 2px solid black;
-	margin-bottom: 15px;
 }
 
-#article > h2 {
+.article {
+	border: 2px solid black;
+	padding: 5%;
+	margin-bottom: 15px;
+
+
+
+}
+
+
+#articles  h2 {
 	padding-top:0;
 	text-align: center;
 }
 
-#article a {
+#articles a {
     color: black;
+
 }
+
+#articles img {
+    width: 65%;
+
+}
+
+
 
 #mapid {
 	margin-bottom: 20px;
 }
 
-#paper_link {
+.paper_link {
 
     text-align: center;
     text-decoration: underline;

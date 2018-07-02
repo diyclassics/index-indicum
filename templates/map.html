@@ -26,10 +26,10 @@
 <h1>Map</h1>
 <div id="mapid"></div>
 
-<div id="article">
+<div id="articles">
     <h2 id="paper_title"></h2>
     <p id="paper_link"></p>
-    <span id="paper"><p>Click on a place to get more info</p></span>
+    <span id="paper"><p>Click on a link to get more info</p></span>
 </div>
 
 <script>
@@ -37,15 +37,12 @@ $(function() {
         {% for  k, v in places.items()  %}
 
        $('body').on('click', '#{{k[:3]}}', function() {
-            $("#paper").empty();
-            $("#paper_title").empty();
-            $("#paper_link").empty();
-
-
+            $("#articles").empty();
             {% for text in v[4] %}
-                $("#paper_title").html('ISAW Paper {{v[3]|safe }}');
-                $("#paper_link").html('<a href="{{v[2][loop.index0]}}" target="_blank">Link to the article</a>');
-                $("#paper").html('{{ text|safe }}');
+                $("#articles").append('<div class="article"><h2 class="paper_title">ISAW Paper {{v[3]|safe }}</h2>'+
+                '<p class="paper_link"><a href="{{v[2][loop.index0]}}" target="_blank">Link to the article</a>'+
+                '</p><span class="paper">{{ text|safe }}</span><div>');
+
             {% endfor %}
         });
        {% endfor %}
