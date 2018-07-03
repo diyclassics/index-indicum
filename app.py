@@ -156,6 +156,11 @@ def places_dict(html_contents, i):
                 else :
                     text_pid_list[k] = text_pid_list[k][0][-100:] + ["<b>" + place_name[j]]
                 text_pid_list[k] = " ".join(text_pid_list[k])
+                incomplete_tags_beginning = re.findall(r"^[^<]*>", text_pid_list[k])
+                incomplete_tags_end = re.findall(r"<[^>]*$", text_pid_list[k])
+                incomplete_tags = incomplete_tags_beginning + incomplete_tags_end
+                for tag in incomplete_tags:
+                    text_pid_list[k] = text_pid_list[k].replace(tag, "")
 
             url_pid = list()
             for id in place_pid :
