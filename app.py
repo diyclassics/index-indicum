@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, flash
 import requests
 from lxml import html
 import re
@@ -36,6 +36,7 @@ from lxml.etree import tostring
 
 app = Flask(__name__)
 CORS(app)
+app.config['SECRET_KEY'] = "This key need to be changed and kept secret"
 
 app.debug = True
 # app.config.from_object(os.environ['APP_SETTINGS'])
@@ -146,7 +147,6 @@ def places_dict(html_contents, i):
                     t = tostring(t, encoding="unicode")
                     text_pid += t
                 text_pid_list[k] = text_pid.replace('\n', '').replace("'", '"')
-                print(text_pid_list[k])
             url_pid = list()
             for id in place_pid :
                 id = BASE_URL + str(i) + "/#" + id
@@ -171,7 +171,9 @@ def map_places(**kwargs):
         i = kwargs["article_id"]
 
         places = places_dict(html_contents, i)
+        article = "ISAW Papers " + str(i)
     else :
+        article = "ISAW Papers"
         places = dict()
         for i, url in enumerate(PAPERS_URLS, 1):
             with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
@@ -190,8 +192,10 @@ def map_places(**kwargs):
         if type(places[k][3]) is list:
             places[k][3] = ''.join(places[k][3])
 
-
-    return render_template('map.html', places=places)
+    if not places :
+        flash("We do not have any places associated with that article", "warning")
+        print("blop")
+    return render_template('map.html', places=places, article=article)
 
 
 
