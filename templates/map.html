@@ -29,7 +29,7 @@
 <div id="articles">
     <h2 id="paper_title"></h2>
     <p id="paper_link"></p>
-    <span id="paper"><p>Click on a link to get more info</p></span>
+    <span id="paper"><p>Click on a place to get more info</p></span>
 </div>
 
 <script>
@@ -39,7 +39,7 @@ $(function() {
        $('body').on('click', '#{{k[:3]}}', function() {
             $("#articles").empty();
             {% for text in v[4] %}
-                $("#articles").append('<div class="article"><h2 class="paper_title">ISAW Paper {{v[3]|safe }}</h2>'+
+                $("#articles").append('<div class="article"><h2 class="paper_title">ISAW Papers {{v[3]|safe }}</h2>'+
                 '<p class="paper_link"><a href="{{v[2][loop.index0]}}" target="_blank">Link to the article</a>'+
                 '</p><span class="paper">{{ text|safe }}</span><div>');
 
@@ -68,7 +68,7 @@ $(function() {
     {% for  k, v in places.items()  %}
 
     var {{k[:4]}} = L.marker({{v[1]}}).addTo(mymap);
-    {{k[:4]}}.bindPopup('<p>More info on <span class="place_name" id="{{k[:3]}}">{{k}}</span> :<br/><a href="{{v[0]}}" target="_blank">Pleiades</a></br>This place is cited in ISAW Paper {{v[3]}} <br/>{% for url in v[2] %}<a href="{{url}}" target="_blank">here </a>{% endfor %}</p>').openPopup();
+    {{k[:4]}}.bindPopup('<p>More info on <span class="place_name" id="{{k[:3]}}">{{k}}</span> :<br/><a href="{{v[0]}}" target="_blank">Pleiades</a></br>This place is cited in ISAW Papers {{v[3]}} <br/>{% for url in v[2] %}<a href="{{url}}" target="_blank">here </a>{% endfor %}</p>').openPopup();
 
 {% endfor %}
 
