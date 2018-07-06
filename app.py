@@ -6,6 +6,7 @@ import re
 from nameparser import HumanName
 from tqdm import tqdm #for progress bar
 from lxml.etree import tostring
+import math
 
 # Imports
 
@@ -146,7 +147,6 @@ def places_dict(html_contents, i):
                     t = tostring(t, encoding="unicode")
                     text_pid += t
                 text_pid_list[k] = text_pid.replace('\n', '').replace("'", '"')
-                print(text_pid_list[k])
             url_pid = list()
             for id in place_pid :
                 id = BASE_URL + str(i) + "/#" + id
@@ -171,6 +171,11 @@ def map_places(**kwargs):
         i = kwargs["article_id"]
 
         places = places_dict(html_contents, i)
+        for k, v in places.items() :
+            # size of the circle on the map (places[k][5])
+            radius = math.log10(len(places[k][2])+1)*100000
+            places[k].append(radius)
+            print(places[k][5])
     else :
         places = dict()
         for i, url in enumerate(PAPERS_URLS, 1):
@@ -187,6 +192,9 @@ def map_places(**kwargs):
                 else :
                     places[k] = v
     for k, v in places.items():
+        # size of the circle on the map (places[k][5])
+        radius = math.log10(len(places[k][2]) + 1) * 150000
+        places[k].append(radius)
         if type(places[k][3]) is list:
             places[k][3] = ''.join(places[k][3])
 
