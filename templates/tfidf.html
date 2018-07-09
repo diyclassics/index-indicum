@@ -1,0 +1,17 @@
+{% extends "partials/container.html" %}
+{%block head %}
+<title>TF IDF</title>
+{%endblock%}
+{% block body %}
+
+<h1 style="text-align:center;">Most important words in ISAW Papers</h1>
+    {% for k, v in tf_idf.items() %}
+<h2>ISAW Papers {{k}}</h2>
+<ul>
+    {% for word, idf in v %}
+    <li>{{word}}</li>
+{% endfor %}
+
+</ul>
+ {% endfor %}
+{%endblock%}
