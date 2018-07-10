@@ -33,7 +33,7 @@ from tqdm import tqdm #for progress bar
 from flask_cors import CORS
 from lxml.etree import tostring
 
-
+USERNAME = os.environ['USERNAME']
 
 app = Flask(__name__)
 CORS(app)
@@ -438,4 +438,3 @@ def tfidf() :
 
 if __name__ == '__main__':
     app.run()
-
