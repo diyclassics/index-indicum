@@ -67,8 +67,14 @@ $(function() {
 
     {% for  k, v in places.items()  %}
 
-    var {{k[:4]}} = L.marker({{v[1]}}).addTo(mymap);
-    {{k[:4]}}.bindPopup('<p>More info on <span class="place_name" id="{{k[:3]}}">{{k}}</span> :<br/><a href="{{v[0]}}" target="_blank">Pleiades</a></br>This place is cited in ISAW Papers {{v[3]}} <br/>{% for url in v[2] %}<a href="{{url}}" target="_blank">here </a>{% endfor %}</p>').openPopup();
+
+    var {{k[:4]}} = L.circle({{v[1]}}, {color: '#f03',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    opacity: 0.5,
+    radius: {{v[5]}}}).addTo(mymap);
+    {{k[:4]}}.bindPopup('<p>More info on <span class="place_name" id="{{k[:3]}}">{{k}}</span> :<br/><a href="{{v[0]}}" target="_blank">Pleiades</a></br>This place is cited in ISAW Paper {{v[3]}} <br/>{% for url in v[2] %}<a href="{{url}}" target="_blank">here </a>{% endfor %}</p>').openPopup();
+
 
 {% endfor %}
 

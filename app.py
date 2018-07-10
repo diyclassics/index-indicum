@@ -6,6 +6,7 @@ import re
 from nameparser import HumanName
 from tqdm import tqdm #for progress bar
 from lxml.etree import tostring
+import math
 
 # Imports
 
@@ -216,6 +217,9 @@ def map_places(**kwargs):
                 else :
                     places[k] = v
     for k, v in places.items():
+        # size of the circle on the map (places[k][5])
+        radius = math.log10(len(places[k][2]) + 1) * 150000
+        places[k].append(radius)
         if type(places[k][3]) is list:
             places[k][3] = ''.join(places[k][3])
 
@@ -223,10 +227,6 @@ def map_places(**kwargs):
         flash("We do not have any places associated with that article", "warning")
         print("blop")
     return render_template('map.html', places=places, article=article)
-
-
-
-USERNAME = 'fmezard'
 
 st = StanfordNERTagger('./stanford-ner/classifiers/english.all.3class.distsim.crf.ser.gz',
                        './stanford-ner/stanford-ner.jar',
