@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, flash
 import requests
 from lxml import html
 import re
@@ -37,6 +37,7 @@ from lxml.etree import tostring
 
 app = Flask(__name__)
 CORS(app)
+app.config['SECRET_KEY'] = "This key need to be changed and kept secret"
 
 app.debug = True
 # app.config.from_object(os.environ['APP_SETTINGS'])
@@ -151,12 +152,28 @@ def places_dict(html_contents, i):
                 text_pid_list[k] = text_pid.replace('\n', '').replace("'", '"')
                 text_pid_list[k] = (text_pid_list[k]).split(place_name[j])
                 text_pid_list[k][0] = text_pid_list[k][0].split(" ")
+                bracket_before = False
+                bracket_after = False
+                if len(text_pid_list[k][0]) > 100:
+                    bracket_before = True
+
                 if len(text_pid_list[k]) > 1 :
                     text_pid_list[k][1] = text_pid_list[k][1].split(" ")
+                    if len(text_pid_list[k][1]) > 100:
+                        bracket_after = True
                     text_pid_list[k] = text_pid_list[k][0][-100:] + ["<b>" + place_name[j] + "</b>"] + text_pid_list[k][1][:100]
                 else :
                     text_pid_list[k] = text_pid_list[k][0][-100:] + ["<b>" + place_name[j]]
                 text_pid_list[k] = " ".join(text_pid_list[k])
+                incomplete_tags_beginning = re.findall(r"^[^<]*>", text_pid_list[k])
+                incomplete_tags_end = re.findall(r"<[^>]*$", text_pid_list[k])
+                incomplete_tags = incomplete_tags_beginning + incomplete_tags_end
+                for tag in incomplete_tags:
+                    text_pid_list[k] = text_pid_list[k].replace(tag, "")
+                if bracket_after  :
+                    text_pid_list[k] =  text_pid_list[k] + "[...]"
+                if bracket_before  :
+                    text_pid_list[k] = "[...]" + text_pid_list[k]
 
             url_pid = list()
             for id in place_pid :
@@ -182,12 +199,9 @@ def map_places(**kwargs):
         i = kwargs["article_id"]
 
         places = places_dict(html_contents, i)
-        for k, v in places.items() :
-            # size of the circle on the map (places[k][5])
-            radius = math.log10(len(places[k][2])+1)*100000
-            places[k].append(radius)
-            print(places[k][5])
+        article = "ISAW Papers " + str(i)
     else :
+        article = "ISAW Papers"
         places = dict()
         for i, url in enumerate(PAPERS_URLS, 1):
             with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
@@ -209,12 +223,10 @@ def map_places(**kwargs):
         if type(places[k][3]) is list:
             places[k][3] = ''.join(places[k][3])
 
-
-    return render_template('map.html', places=places)
-
-
-
-USERNAME = 'fmezard'
+    if not places :
+        flash("We do not have any places associated with that article", "warning")
+        print("blop")
+    return render_template('map.html', places=places, article=article)
 
 st = StanfordNERTagger('./stanford-ner/classifiers/english.all.3class.distsim.crf.ser.gz',
                        './stanford-ner/stanford-ner.jar',
