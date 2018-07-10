@@ -371,6 +371,71 @@ def ner():
     return render_template('map_ner.html', places=map)
 
 
+@app.route('/tfidf')
+def tfidf() :
+    """ Route displaying the 10 words of each articles with the highest tf-idf score
+    	"""
+    number_doc_containing = {}
+
+    tf_idf = {}
+    wordcount = {}
+    total_word = {}
+    for i, url in enumerate(PAPERS_URLS, 1):
+        with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
+            html_page = html.parse(paper)
+
+            # deleting the bibliography
+            work_cited = html_page.xpath('//p[@class="work_cited"]')
+            for work in work_cited :
+                work.getparent().remove(work)
+            text_page = html_page.xpath("//body//text()")
+
+        total_word[str(i)] = 0
+        wordcount [str(i)] = {}
+        tf_idf[str(i)] = {}
+
+        # To eliminate duplicates, remember to split by punctuation
+        for words in text_page :
+            for word in words.lower().split():
+                word = word.replace(".", "")
+                word = word.replace(",", "")
+                word = word.replace(":", "")
+                word = word.replace("\"", "")
+                word = word.replace("!", "")
+                word = word.replace(";", "")
+                word = word.replace("(", "")
+                word = word.replace(")", "")
+                word = word.replace("|", "")
+                word = word.replace("â€œ", "")
+                word = word.replace("â€˜", "")
+                word = word.replace("*", "")
+
+                # counting the occurrences of the words in each document and the number of doc where each word appears
+                if word not in wordcount[str(i)]:
+                    wordcount[str(i)][word] = 1
+                    if word in number_doc_containing.keys() :
+                        number_doc_containing[word] += 1
+                    else :
+                        number_doc_containing[word] = 1
+
+                else:
+                    wordcount[str(i)][word] += 1
+            total_word[str(i)] += 1
+
+    # calculating df and idf scores
+    for i, url in enumerate(PAPERS_URLS, 1):
+        for  word, number in wordcount[str(i)].items() :
+            tf = wordcount[str(i)][word]/total_word[str(i)]
+
+            tf_idf[str(i)][word] =  tf * math.log(i/number_doc_containing[word])
+        # ordonning the dictionnary
+        tf_idf[str(i)] = sorted(tf_idf[str(i)].items(), key=lambda x: x[1])
+
+        # Taking the ten last values (best if-idf score
+        tf_idf[str(i)] = tf_idf[str(i)][-10:]
+    print(type(tf_idf["11"]))
+    return render_template('tfidf.html', tf_idf = tf_idf)
+
 if __name__ == '__main__':
     app.run()
 
