@@ -1,3 +1,5 @@
+from constants import USERNAME
+
 import os
 import json
 import requests
@@ -6,7 +8,6 @@ from nltk import pos_tag
 from nltk.chunk import conlltags2tree
 
 
-USERNAME = os.environ['USERNAME']
 
 def stanfordNE2BIO(tagged_sent):
     bio_tagged_sent = []

@@ -1,6 +1,6 @@
 from ner import stanfordNE2BIO, geonames_query, stanfordNE2tree
 from places import places_dict
-
+from constants import USERNAME, BASE_URL, PAPERS_URLS
 import os
 from flask import Flask, render_template, flash
 import requests
@@ -27,7 +27,6 @@ from tqdm import tqdm #for progress bar
 from flask_cors import CORS
 from lxml.etree import tostring
 
-USERNAME = os.environ['USERNAME']
 
 app = Flask(__name__)
 CORS(app)
@@ -36,8 +35,7 @@ app.config['SECRET_KEY'] = "This key need to be changed and kept secret"
 app.debug = True
 # app.config.from_object(os.environ['APP_SETTINGS'])
 
-BASE_URL = 'http://dlib.nyu.edu/awdl/isaw/isaw-papers/'
-PAPERS_URLS = [f'{BASE_URL}{i}' for i in range(1,14)]
+
 
 # Helper functions
 def _sort_names(names):

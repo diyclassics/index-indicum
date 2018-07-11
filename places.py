@@ -1,9 +1,10 @@
+from constants import BASE_URL
+
 import json
 import requests
 from lxml.etree import tostring
 import re
 
-BASE_URL = 'http://dlib.nyu.edu/awdl/isaw/isaw-papers/'
 
 def places_dict(html_contents, i):
     '''
