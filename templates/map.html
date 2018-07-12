@@ -22,8 +22,21 @@
   src="https://code.jquery.com/jquery-3.3.1.js"
   integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
   crossorigin="anonymous"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 
 <h1>Map | {{article}}</h1>
+<div class="dropdown" style="margin : 1%;">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Chose your article
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      {% for i in range (1, 14) %}
+    <a class="dropdown-item" href="{{url_for('map_places')}}/{{i}}">ISAW Papers {{i}}</a>
+    {% endfor %}
+  </div>
+</div>
 <div id="mapid"></div>
 
 <div id="articles">
@@ -31,6 +44,7 @@
     <p id="paper_link"></p>
     <span id="paper"><p>Click on a place to get more info</p></span>
 </div>
+
 
 <script>
 $(function() {
