@@ -225,7 +225,6 @@ def map_places(**kwargs):
 
     if not places :
         flash("We do not have any places associated with that article", "warning")
-        print("blop")
     return render_template('map.html', places=places, article=article)
 
 st = StanfordNERTagger('./stanford-ner/classifiers/english.all.3class.distsim.crf.ser.gz',
