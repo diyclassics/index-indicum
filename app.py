@@ -10,6 +10,7 @@ from nameparser import HumanName
 from tqdm import tqdm #for progress bar
 from lxml.etree import tostring
 import math
+import json
 
 import xml.etree.ElementTree as ET
 import json
@@ -140,19 +141,20 @@ def map_places(**kwargs):
     Route to a pages with a map of all the places mentionned in the articles (one of the paper if the number is give as an argument)
     '''
     if kwargs :
-        with open("data/papers/isaw-papers-%s.xhtml" % (kwargs["article_id"]), "r") as paper:
-            html_contents = [html.parse(paper)]
-        i = kwargs["article_id"]
 
-        places = places_dict(html_contents, i)
+        i = kwargs["article_id"]
+        places = dict()
+        with open("data/places.json", "r") as places_json:
+            places_article = json.load(places_json)
+        for k,v in places_article.items() :
+            if places_article[k][3] == [str(i)] :
+                places[k] = v
         article = "ISAW Papers " + str(i)
     else :
         article = "ISAW Papers"
         places = dict()
-        for i, url in enumerate(PAPERS_URLS, 1):
-            with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
-                html_contents = [html.parse(paper)]
-            places_article = places_dict(html_contents, i)
+        with open ("data/places.json", "r") as places_json :
+            places_article = json.load(places_json)
             for k,v in places_article.items() :
                 if k in places :
                     for p in places_article[k][2] :
