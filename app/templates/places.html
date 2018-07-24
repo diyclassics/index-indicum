@@ -8,9 +8,9 @@
 
 <ul>
     {% for k, v in places_data.items() %}
-    <h2>{{k}}</h2>
-    {% for place in v %}
-    <li>{{place}}</li>
+    <h2>ISAW Papers {{k}}:</h2>
+    {% for place, info in v.items() %}
+    <li><a href="{{info[0]}}">{{place}}</a></li>
     {% endfor %}
     {% endfor %}
 </ul>
