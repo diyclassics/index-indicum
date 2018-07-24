@@ -38,23 +38,24 @@ from nameparser import HumanName
 # # # app.config.from_object(os.environ['APP_SETTINGS'])
 #
 #
-#
- # Helper functions
+
+
+# Helper functions
 def _sort_names(names):
     # Should check for 'last' in keys
     parsed_names = [HumanName(name) for name in names]
     return [' '.join(name) for name in sorted(parsed_names, key=lambda x: x['last'])]
-#
 
 
 # Routes
 @app.route('/')
 def homepage():
-    ''' Route to the homepage
-    '''
+    """
+    Route to the homepage
+    """
     authors_data = dict()
     for i, url in enumerate(PAPERS_URLS, 1):
-        with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
+        with open("data/papers/isaw-papers-%s.xhtml" % i, "r") as paper:
             html_content = html.parse(paper)
         a1 = html_content.xpath('//span[@rel="dcterms:creator"]//text()')
         a2 = html_content.xpath('//span[contains(@property, "dcterms:creator")]/text()')
@@ -63,11 +64,12 @@ def homepage():
         authors_data[str(i)] = a
     return render_template('index.html',  authors_data=authors_data, BASE_URL=BASE_URL)
 
+
 @app.route('/authors')
 def get_papers():
-    '''
-     Route to a page listing the papers by authors
-    '''
+    """
+    Route to a page listing the papers by authors
+    """
     authors_papers = dict()
     for i, url in enumerate(PAPERS_URLS, 1):
         with open("data/papers/isaw-papers-%s.xhtml" % i, "r") as paper:
@@ -76,31 +78,30 @@ def get_papers():
         authors += html_content.xpath('//span[contains(@property, "dcterms:creator")]/text()')
         authors += html_content.xpath('//h2[contains(@property, "dcterms:creator")]/text()')
         authors = list(set(_sort_names(authors)))
-        for author in authors :
-            try :
+        for author in authors:
+            try:
                 authors_papers[author]["articles"].append(str(i))
-            except KeyError :
-                try :
+            except KeyError:
+                try:
                     authors_papers[author]["article"] = list()
-                except KeyError :
+                except KeyError:
                     authors_papers[author] = dict()
                     authors_papers[author]["articles"] = list()
                 authors_papers[author]["articles"].append(str(i))
-            authors_papers[author]["viaf"] = html_content.xpath('//span[@rel="dcterms:creator"]/a[.="%s"]/@href'%author)
+            authors_papers[author]["viaf"] = html_content.xpath('//span[@rel="dcterms:creator"]/a[.="%s"]/@href' % author)
     return render_template('author_reversed.html', authors_papers=authors_papers, BASE_URL=BASE_URL)
 
 
 @app.route('/places')
 def get_places():
-    '''
+    """
     Route to a page listing the places mentionned in the papers
-    '''
+    """
     places_data = dict()
     for i, url in enumerate(PAPERS_URLS, 1):
-        with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
+        with open("data/papers/isaw-papers-%s.xhtml" % i, "r") as paper:
             html_content = html.parse(paper)
         place_name = html_content.xpath('//a[starts-with(@href,"https://pleiades.stoa.org/place")]/text()')
-        article = "ISAW Papers"
         places_data[str(i)] = dict()
         with open("data/places.json", "r") as places_json:
             places_article = json.load(places_json)
@@ -114,32 +115,32 @@ def get_places():
 @app.route('/<article_id>/map')
 @app.route('/map')
 def map_places(**kwargs):
-    '''
+    """
     Route to a pages with a map of all the places mentionned in the articles (one of the paper if the number is give as an argument)
-    '''
-    if kwargs :
+    """
+    if kwargs:
 
         i = kwargs["article_id"]
         places = dict()
         with open("data/places.json", "r") as places_json:
             places_article = json.load(places_json)
-        for k,v in places_article.items() :
-            if places_article[k][3] == [str(i)] :
+        for k, v in places_article.items():
+            if places_article[k][3] == [str(i)]:
                 places[k] = v
         article = "ISAW Papers " + str(i)
-    else :
+    else:
         article = "ISAW Papers"
         places = dict()
-        with open ("data/places.json", "r") as places_json :
+        with open("data/places.json", "r") as places_json:
             places_article = json.load(places_json)
-            for k,v in places_article.items() :
-                if k in places :
-                    for p in places_article[k][2] :
+            for k, v in places_article.items():
+                if k in places:
+                    for p in places_article[k][2]:
                         places[k][2].append(p)
-                        if str(i) not in places[k][3] :
+                        if str(i) not in places[k][3]:
                             places[k][3].append(str(i))
                     places[k][3] = ' and '.join(places[k][3])
-                else :
+                else:
                     places[k] = v
     for k, v in places.items():
         # size of the circle on the map (places[k][5])
@@ -148,7 +149,7 @@ def map_places(**kwargs):
         if type(places[k][3]) is list:
             places[k][3] = ''.join(places[k][3])
 
-    if not places :
+    if not places:
         flash("We do not have any places associated with that article", "warning")
     return render_template('map.html', places=places, article=article)
 #
@@ -218,29 +219,29 @@ def map_places(**kwargs):
 #     print(len(map))
 #
 #     return render_template('map_ner.html', places=map)
-#
-#
+
+
 @app.route('/tfidf')
-def tfidf() :
+def tfidf():
     """ Route displaying the 10 words of each articles with the highest tf-idf score
-    	"""
+    """
     number_doc_containing = {}
     tf_idf = {}
     wordcount = {}
     total_word = {}
     for i, url in enumerate(PAPERS_URLS, 1):
-        with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
+        with open("data/papers/isaw-papers-%s.xhtml" % i, "r") as paper:
             html_page = html.parse(paper)
             # deleting the bibliography
             work_cited = html_page.xpath('//p[@class="work_cited"]')
-            for work in work_cited :
+            for work in work_cited:
                 work.getparent().remove(work)
             text_page = html_page.xpath("//body//text()")
         total_word[str(i)] = 0
         wordcount[str(i)] = {}
         tf_idf[str(i)] = {}
         # To eliminate duplicates, remember to split by punctuation
-        for words in text_page :
+        for words in text_page:
             for word in words.lower().split():
                 word = word.replace(".", "")
                 word = word.replace(",", "")
@@ -258,9 +259,9 @@ def tfidf() :
                 # counting the occurrences of the words in each document and the number of doc where each word appears
                 if word not in wordcount[str(i)]:
                     wordcount[str(i)][word] = 1
-                    if word in number_doc_containing.keys() :
+                    if word in number_doc_containing.keys():
                         number_doc_containing[word] += 1
-                    else :
+                    else:
                         number_doc_containing[word] = 1
 
                 else:
@@ -269,14 +270,13 @@ def tfidf() :
 
     # calculating df and idf scores
     for i, url in enumerate(PAPERS_URLS, 1):
-        for  word, number in wordcount[str(i)].items() :
+        for word, number in wordcount[str(i)].items():
             tf = wordcount[str(i)][word]/total_word[str(i)]
 
-            tf_idf[str(i)][word] =  tf * math.log(i/number_doc_containing[word])
+            tf_idf[str(i)][word] = tf * math.log(i/number_doc_containing[word])
         # ordonning the dictionnary
         tf_idf[str(i)] = sorted(tf_idf[str(i)].items(), key=lambda x: x[1])
 
         # Taking the ten last values (best if-idf score
         tf_idf[str(i)] = tf_idf[str(i)][-10:]
-    return render_template('tfidf.html', tf_idf = tf_idf)
-
+    return render_template('tfidf.html', tf_idf=tf_idf)
