@@ -1,21 +1,22 @@
-from app import app 
+from app import app
+from flask import Flask, render_template, flash
+
+import json
+import math
 
 # from ner import stanfordNE2BIO, geonames_query, stanfordNE2tree
 # from places import places_dict
 # from constants import USERNAME, BASE_URL, PAPERS_URLS
 # import os
-# from flask import Flask, render_template, flash
 # import requests
 # from lxml import html
 # import re
 # from nameparser import HumanName
 # from tqdm import tqdm #for progress bar
 # from lxml.etree import tostring
-# import math
-# import json
 #
 # import xml.etree.ElementTree as ET
-# import json
+
 # import requests
 # import random
 #
@@ -30,13 +31,12 @@ from app import app
 # from flask_cors import CORS
 # from lxml.etree import tostring
 #
-#
-# app = Flask(__name__)
-# CORS(app)
-# app.config['SECRET_KEY'] = "This key need to be changed and kept secret"
-#
-# app.debug = True
-# # app.config.from_object(os.environ['APP_SETTINGS'])
+# # app = Flask(__name__)
+# # CORS(app)
+# # app.config['SECRET_KEY'] = "This key need to be changed and kept secret"
+# #
+# # app.debug = True
+# # # app.config.from_object(os.environ['APP_SETTINGS'])
 #
 #
 #
@@ -55,15 +55,15 @@ from app import app
 #
 # # Uncomment inorder to get the newest verion of the articles
 # # _update_cash()
-#
-# # Routes
-# @app.route('/')
-# def homepage():
-#     ''' Route to the homepage
-#     '''
-#     return render_template('index.html')
-#
-#
+
+# Routes
+@app.route('/')
+def homepage():
+    ''' Route to the homepage
+    '''
+    return render_template('index.html')
+
+
 # @app.route('/authors')
 # def get_authors():
 #     '''
@@ -132,50 +132,50 @@ from app import app
 #         if places:
 #             places_data[f'ISAW Papers {i}'] = places
 #     return render_template('places.html', places_data=places_data)
-#
-#
-#
-# @app.route('/map/<article_id>')
-# @app.route('/<article_id>/map')
-# @app.route('/map')
-# def map_places(**kwargs):
-#     '''
-#     Route to a pages with a map of all the places mentionned in the articles (one of the paper if the number is give as an argument)
-#     '''
-#     if kwargs :
-#
-#         i = kwargs["article_id"]
-#         places = dict()
-#         with open("data/places.json", "r") as places_json:
-#             places_article = json.load(places_json)
-#         for k,v in places_article.items() :
-#             if places_article[k][3] == [str(i)] :
-#                 places[k] = v
-#         article = "ISAW Papers " + str(i)
-#     else :
-#         article = "ISAW Papers"
-#         places = dict()
-#         with open ("data/places.json", "r") as places_json :
-#             places_article = json.load(places_json)
-#             for k,v in places_article.items() :
-#                 if k in places :
-#                     for p in places_article[k][2] :
-#                         places[k][2].append(p)
-#                         if str(i) not in places[k][3] :
-#                             places[k][3].append(str(i))
-#                     places[k][3] = ' and '.join(places[k][3])
-#                 else :
-#                     places[k] = v
-#     for k, v in places.items():
-#         # size of the circle on the map (places[k][5])
-#         radius = math.log10(len(places[k][2]) + 1) * 150000
-#         places[k].append(radius)
-#         if type(places[k][3]) is list:
-#             places[k][3] = ''.join(places[k][3])
-#
-#     if not places :
-#         flash("We do not have any places associated with that article", "warning")
-#     return render_template('map.html', places=places, article=article)
+
+
+
+@app.route('/map/<article_id>')
+@app.route('/<article_id>/map')
+@app.route('/map')
+def map_places(**kwargs):
+    '''
+    Route to a pages with a map of all the places mentionned in the articles (one of the paper if the number is give as an argument)
+    '''
+    if kwargs :
+
+        i = kwargs["article_id"]
+        places = dict()
+        with open("data/places.json", "r") as places_json:
+            places_article = json.load(places_json)
+        for k,v in places_article.items() :
+            if places_article[k][3] == [str(i)] :
+                places[k] = v
+        article = "ISAW Papers " + str(i)
+    else :
+        article = "ISAW Papers"
+        places = dict()
+        with open ("data/places.json", "r") as places_json :
+            places_article = json.load(places_json)
+            for k,v in places_article.items() :
+                if k in places :
+                    for p in places_article[k][2] :
+                        places[k][2].append(p)
+                        if str(i) not in places[k][3] :
+                            places[k][3].append(str(i))
+                    places[k][3] = ' and '.join(places[k][3])
+                else :
+                    places[k] = v
+    for k, v in places.items():
+        # size of the circle on the map (places[k][5])
+        radius = math.log10(len(places[k][2]) + 1) * 150000
+        places[k].append(radius)
+        if type(places[k][3]) is list:
+            places[k][3] = ''.join(places[k][3])
+
+    if not places :
+        flash("We do not have any places associated with that article", "warning")
+    return render_template('map.html', places=places, article=article)
 #
 # st = StanfordNERTagger('./stanford-ner/classifiers/english.all.3class.distsim.crf.ser.gz',
 #                        './stanford-ner/stanford-ner.jar',
@@ -310,5 +310,5 @@ from app import app
 #     print(type(tf_idf["11"]))
 #     return render_template('tfidf.html', tf_idf = tf_idf)
 #
-# if __name__ == '__main__':
-#     app.run()
+# # if __name__ == '__main__':
+# #     app.run()
