@@ -310,5 +310,6 @@ from app import app
 #     print(type(tf_idf["11"]))
 #     return render_template('tfidf.html', tf_idf = tf_idf)
 #
-# if __name__ == '__main__':
-#     app.run()
+if __name__ == '__main__':
+    app.run()
+

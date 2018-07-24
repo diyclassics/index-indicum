@@ -3,10 +3,20 @@ import requests
 from lxml.etree import tostring
 import re
 import json
+from constants import BASE_URL, PAPERS_URLS
 
-BASE_URL = 'http://dlib.nyu.edu/awdl/isaw/isaw-papers/'
 
-PAPERS_URLS = [f'{BASE_URL}{i}' for i in range(1,14)]
+
+
+def articles_html() :
+    for i, url in enumerate(PAPERS_URLS, 1):
+        page = requests.get(url)
+        html_content = page.text
+        with open("data/papers/isaw-papers-%s.xhtml"%i,"w") as paper:
+            paper.write(str(html_content))
+
+# articles_html()
+
 def places_dict():
     places = dict()
     for i, url in enumerate(PAPERS_URLS, 1):
@@ -25,9 +35,9 @@ def places_dict():
                 text_pid_list = html_content.xpath('//a[starts-with(@href,"%s")]/ancestor::p' % place_pleiades[j])
                 text_captionid_list = html_content.xpath('//a[starts-with(@href,"%s")]/ancestor::figure' % place_pleiades[j])
 
-                for text in text_captionid_list :
+                for text in text_captionid_list:
                     text_pid_list.append(text)
-                for k, texte in enumerate(text_pid_list) :
+                for k, texte in enumerate(text_pid_list):
                     text_pid = ""
                     for t in texte :
                         t = tostring(t, encoding="unicode")
@@ -77,3 +87,4 @@ places = places_dict()
 
 with open("data/places.json", "w") as data_places:
     data_places.write(json.dumps(places))
+
