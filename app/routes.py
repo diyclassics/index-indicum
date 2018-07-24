@@ -33,7 +33,6 @@ from nameparser import HumanName
 #
 # # app = Flask(__name__)
 # # CORS(app)
-app.config['SECRET_KEY'] = "This key need to be changed and kept secret"
 # #
 # # app.debug = True
 # # # app.config.from_object(os.environ['APP_SETTINGS'])
@@ -53,27 +52,18 @@ def _sort_names(names):
 def homepage():
     ''' Route to the homepage
     '''
-    return render_template('index.html')
-
+    authors_data = dict()
+    for i, url in enumerate(PAPERS_URLS, 1):
+        with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
+            html_content = html.parse(paper)
+        a1 = html_content.xpath('//span[@rel="dcterms:creator"]//text()')
+        a2 = html_content.xpath('//span[contains(@property, "dcterms:creator")]/text()')
+        a3 = html_content.xpath('//h2[contains(@property, "dcterms:creator")]/text()')
+        a = _sort_names(list(set(a1+a2+a3)))
+        authors_data[str(i)] = a
+    return render_template('index.html',  authors_data=authors_data, BASE_URL=BASE_URL)
 
 @app.route('/authors')
-def get_authors():
-     '''
-     Route to a page listing the authors by papers
-     '''
-     authors_data = dict()
-     for i, url in enumerate(PAPERS_URLS, 1):
-         with open("data/papers/isaw-papers-%s.xhtml" % (i), "r") as paper:
-             html_content = html.parse(paper)
-         a1 = html_content.xpath('//span[@rel="dcterms:creator"]//text()')
-         a2 = html_content.xpath('//span[contains(@property, "dcterms:creator")]/text()')
-         a3 = html_content.xpath('//h2[contains(@property, "dcterms:creator")]/text()')
-         a = _sort_names(list(set(a1+a2+a3)))
-         authors_data[f'ISAW Papers {i}'] = a
-     return render_template('author.html', authors_data=authors_data)
-#
-#
-@app.route('/authors_reversed')
 def get_papers():
     '''
      Route to a page listing the papers by authors
@@ -98,8 +88,8 @@ def get_papers():
                 authors_papers[author]["articles"].append(str(i))
             authors_papers[author]["viaf"] = html_content.xpath('//span[@rel="dcterms:creator"]/a[.="%s"]/@href'%author)
     return render_template('author_reversed.html', authors_papers=authors_papers, BASE_URL=BASE_URL)
-#
-#
+
+
 @app.route('/places')
 def get_places():
     '''
@@ -288,8 +278,5 @@ def tfidf() :
 
         # Taking the ten last values (best if-idf score
         tf_idf[str(i)] = tf_idf[str(i)][-10:]
-    print(type(tf_idf["11"]))
     return render_template('tfidf.html', tf_idf = tf_idf)
-#
-# if __name__ == '__main__':
-#     app.run()
+
