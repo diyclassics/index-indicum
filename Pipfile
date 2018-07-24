@@ -35,5 +35,6 @@ folium = "*"
 tqdm = "*"
 flask-cors = "*"
 python-dotenv = "*"
+flask-bootstrap = "*"
 
 [dev-packages]
