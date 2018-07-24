@@ -33,7 +33,7 @@ from nameparser import HumanName
 #
 # # app = Flask(__name__)
 # # CORS(app)
-# # app.config['SECRET_KEY'] = "This key need to be changed and kept secret"
+app.config['SECRET_KEY'] = "This key need to be changed and kept secret"
 # #
 # # app.debug = True
 # # # app.config.from_object(os.environ['APP_SETTINGS'])
