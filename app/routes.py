@@ -274,7 +274,7 @@ def tfidf():
             tf = wordcount[str(i)][word]/total_word[str(i)]
 
             tf_idf[str(i)][word] = tf * math.log(i/number_doc_containing[word])
-        # ordonning the dictionnary
+        # put the dictionary in the right order
         tf_idf[str(i)] = sorted(tf_idf[str(i)].items(), key=lambda x: x[1])
 
         # Taking the ten last values (best if-idf score

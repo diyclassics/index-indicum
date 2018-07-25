@@ -8,7 +8,6 @@ from nltk import pos_tag
 from nltk.chunk import conlltags2tree
 
 
-
 def stanfordNE2BIO(tagged_sent):
     bio_tagged_sent = []
     prev_tag = "O"
@@ -26,12 +25,10 @@ def stanfordNE2BIO(tagged_sent):
         elif prev_tag != "O" and prev_tag != tag: # Adjacent NE
             bio_tagged_sent.append((token, "B-"+tag))
             prev_tag = tag
-
     return bio_tagged_sent
 
 
 # Function for querying geonames
-
 def geonames_query(location):
     '''
     queries geonames for given location name;
@@ -59,12 +56,12 @@ def geonames_query(location):
         countries = list()
         if len(parsed_response['geonames']) > 0:
             for i in range(len(parsed_response['geonames'])):
-                if 'countryName' in parsed_response['geonames'][i] :
+                if 'countryName' in parsed_response['geonames'][i]:
                     countries.append(parsed_response['geonames'][i]['countryName'])
             top_country = sorted(Counter(countries))[0]
-            for country in parsed_response['geonames'] :
-                if 'countryName' in country :
-                    if country['countryName'] == top_country :
+            for country in parsed_response['geonames']:
+                if 'countryName' in country:
+                    if country['countryName'] == top_country:
                         coordinates = (country['lat'], country['lng'])
     else:
         coordinates = ('', '')
