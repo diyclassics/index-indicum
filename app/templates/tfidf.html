@@ -7,7 +7,7 @@
 <h1 style="text-align:center;">Most important words in ISAW Papers</h1>
 <div class="row d-flex justify-content-around">
     {% for k, v in tf_idf.items() %}
-<div class="col-3 bg-light p-3 m-3">
+<div class="col-3 p-3 m-3" style="background-color : #dddddd;">
 <h2>ISAW Papers {{k}}</h2>
 <ul>
     {% for word, idf in v %}
