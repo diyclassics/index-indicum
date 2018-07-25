@@ -19,14 +19,14 @@ class BasicTests(unittest.TestCase):
     def tearDown(self):
         pass
 
-# ###############
-# #### tests ####
-# ###############
-#
-#     def test_main_page(self):
-#         # response = self.get('/', follow_redirects=True)
-#         # self.assertEqual(response.status_code, 200)
-#         pass
+###############
+#### tests ####
+###############
+
+    def test_main_page(self):
+        # response = self.get('/', follow_redirects=True)
+        # self.assertEqual(response.status_code, 200)
+        pass
 #
 #
 # class HelperTests(unittest.TestCase):
@@ -38,5 +38,5 @@ class BasicTests(unittest.TestCase):
 #         pass
 #
 #
-# if __name__ == "__main__":
-#     unittest.main()
+if __name__ == "__main__":
+    unittest.main()
